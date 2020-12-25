@@ -1,17 +1,17 @@
-#Gitlab Pipeline With AWS Codedeploy
+# Gitlab Pipeline With AWS Codedeploy
 ![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/oc5bq3919tr4j5oj2jpc.png)
 
 ##Flow Chart
 ![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/xg79z3cjvx6cth7pexjo.png)
 
-###1. [Create Codedeploy](https://dev.to/vumdao/create-codedeploy-4425)
+### 1. [Create Codedeploy](https://dev.to/vumdao/create-codedeploy-4425)
 - Follow the link to create lambda function which is trigger by S3 notification event and then create code deployment.
 - Gitlab pipeline job will push deploy.zip to S3 so that lambda function will create code deployment for running install script on target instance by codedeploy-agent
 ![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/v8gvmrxqzx6muj31349c.png)
 
 ![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/2lr98c3fanha39zk1asv.png)
 
-###2. Gitlab pipeline jobs to build and deploy
+### 2. Gitlab pipeline jobs to build and deploy
 ![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/o2164onbj04mixqxgjlh.jpg)
 - `image_version.txt` is packed in `deploy.zip` for codedeploy get version to deploy
 - Codedeploy structure:
@@ -65,7 +65,7 @@ deploy:
     - deploy-runner
 ```
 
-###3. Install script
+### 3. Install script
 ![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/texdrp5op28irl7g35b2.png)
 - The script is run on target instance by codedeploy-agent
 ```
@@ -85,7 +85,7 @@ export APP_VERSION=${version}
 docker-compose up -d app
 ```
 
-###4. `appspec.yml`
+### 4. `appspec.yml`
 ```
 version: 0.0
 os: linux
