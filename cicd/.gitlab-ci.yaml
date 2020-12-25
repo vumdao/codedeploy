@@ -1,0 +1,44 @@
+build:
+  stage: build
+  script:
+    - echo compile and package
+    - echo tag image version
+    - branch_name=$(echo $CI_COMMIT_REF_NAME | sed 's/\//-/g')
+    - version="$branch_name-$CI_PIPELINE_ID"
+    - echo login ECR and push image
+    - eval $(aws ecr get-login --no-include-email --region ap-northeast-1)
+    - docker tag app:latest myimage:${version}
+    - docker push myimage:${version}
+  only:
+    refs:
+      - feature
+      - develop
+      - integration
+      - hotfix
+      - master
+    changes:
+      - src/**/*
+  tags:
+    - build-runner
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploy app"
+    - branch_name=$(echo $CI_COMMIT_REF_NAME | sed 's/\//-/g')
+    - version="$branch_name-$CI_PIPELINE_ID"
+    - echo $version > codedeploy/image_version.txt
+    - cd codedeploy
+    - zip -r deploy.zip appspec.yml image_version.txt scripts
+    - aws s3 cp deploy.zip s3://codedeploy/automation/${CI_COMMIT_REF_NAME}/app/deploy.zip --metadata x-amz-meta-application-name=app,x-amz-meta-deploymentgroup-name=${obj}
+  only:
+    refs:
+      - feature
+      - develop
+      - integration
+      - hotfix
+      - master
+    changes:
+      - src/**/*
+  tags:
+    - deploy-runner
